@@ -1,0 +1,6 @@
+com/quiz/app/AppApplication.class
+com/quiz/app/entity/Question.class
+com/quiz/app/service/QuizService.class
+com/quiz/app/webclient/OpenAIClient.class
+com/quiz/app/controller/QuizController.class
+com/quiz/app/repo/QuestionRepository.class
