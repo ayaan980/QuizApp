@@ -1,4 +1,5 @@
 com/quiz/app/AppApplication.class
+com/quiz/app/service/QuizService$1.class
 com/quiz/app/entity/Question.class
 com/quiz/app/service/QuizService.class
 com/quiz/app/webclient/OpenAIClient.class

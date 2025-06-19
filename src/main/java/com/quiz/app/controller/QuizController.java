@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/quiz")
-@CrossOrigin(origins = "http://localhost:3000") // allow React dev server
+@CrossOrigin(origins = "http://localhost:3001")
 public class QuizController {
 
 

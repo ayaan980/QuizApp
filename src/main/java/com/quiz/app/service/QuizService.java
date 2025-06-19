@@ -1,11 +1,15 @@
 package com.quiz.app.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quiz.app.entity.Question;
 import com.quiz.app.repo.QuestionRepository;
 import com.quiz.app.webclient.OpenAIClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,16 +18,36 @@ public class QuizService {
 
     private final QuestionRepository repository;
     private final OpenAIClient openAIClient;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     public List<Question> generateQuestion(String topic) {
-        String rawResponse = openAIClient.generateRawQuizJson(topic);
+        List<Question> questions = new ArrayList<>();
+        try {
+            String rawResponse = openAIClient.generateRawQuizJson(topic);
 
-        List<Question> dummy = List.of(
-                new Question(null, "What is Java?",
-                        List.of("A coffee", "A programming language", "A framework"),
-                        "A programming language")
-        );
+            JsonNode root = objectMapper.readTree(rawResponse);
+            JsonNode choicesNode = root.path("choices");
+            if (choicesNode.isArray() && choicesNode.size() > 0) {
+                String content = choicesNode.get(0).path("message").path("content").asText();
 
-        return repository.saveAll(dummy);
+                JsonNode parsed = objectMapper.readTree(content);
+                if (parsed.isArray()) {
+                    for (JsonNode node : parsed) {
+                        String questionText = node.path("question").asText();
+                        List<String> options = objectMapper.convertValue(node.path("options"), new TypeReference<List<String>>() {});
+                        String answer = node.path("answer").asText();
+
+                        if (!questionText.isEmpty() && !options.isEmpty() && !answer.isEmpty()) {
+                            questions.add(new Question(null, questionText, options, answer));
+                        }
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error parsing OpenAI response: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return repository.saveAll(questions);
     }
 }
