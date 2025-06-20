@@ -1,12 +1,14 @@
 package com.quiz.app.webclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.quiz.app.entity.Question;
+
+import com.quiz.app.config.OpenAIConfig;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.web.reactive.function.client.WebClientResponseException;
 import reactor.util.retry.Retry;
-import com.fasterxml.jackson.core.type.TypeReference;
+
 import java.time.Duration;
 import java.util.List;
 import java.util.Map;
@@ -14,14 +16,15 @@ import java.util.Map;
 @Component
 public class OpenAIClient {
 
-    private final WebClient webClient;
-    private  ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public OpenAIClient() {
+    private final WebClient webClient;
+
+
+    public OpenAIClient(@Value("${openai.api.key}") String apiKey) {
         this.webClient = WebClient.builder()
                 .baseUrl("https://api.openai.com/v1")
-                .defaultHeader("Authorization", "Bearer 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")
-                .build();
+                .defaultHeader("Authorization", "Bearer " + apiKey ).build();
     }
 
     public String generateRawQuizJson(String topic) {
@@ -40,7 +43,12 @@ public class OpenAIClient {
                 .uri("/chat/completions")
                 .bodyValue(request)
                 .retrieve()
+                .onStatus(status -> status.value() == 429, response -> {
+                    System.out.println("⚠️ OpenAI rate limit hit (429). Retrying...");
+                    return response.createException();
+                })
                 .bodyToMono(String.class)
+                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                 .block();
     }
 }

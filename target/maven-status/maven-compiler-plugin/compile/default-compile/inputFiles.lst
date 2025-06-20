@@ -1,6 +1,8 @@
 /Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/AppApplication.java
+/Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/config/OpenAIConfig.java
 /Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/controller/QuizController.java
 /Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/entity/Question.java
 /Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/repo/QuestionRepository.java
 /Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/service/QuizService.java
+/Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/webclient/CohereClient.java
 /Users/mohdayaan/Downloads/QuizApp/src/main/java/com/quiz/app/webclient/OpenAIClient.java
