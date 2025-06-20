@@ -17,8 +17,7 @@ openai:
   model: gpt-3.5-turbo
   api:
     url: https://api.openai.com/v1/chat/completions
-    key: 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
-
+    key: private-key
 cohere:
   api:
     url: https://api.cohere.ai/v1/generate
