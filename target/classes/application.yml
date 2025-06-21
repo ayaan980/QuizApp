@@ -22,3 +22,5 @@ cohere:
   api:
     url: https://api.cohere.ai/v1/generate
     key: KETruJJQArW5K4cYrV62QS3KsRqvWwa2RvwVSFRm
+jwt:
+  secret: KJd83^maL#P2!c9vNQwZx7EfsT@RMbVp
