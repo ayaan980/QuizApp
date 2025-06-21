@@ -21,8 +21,8 @@ public class QuizService {
     private final CohereClient cohereClient; // Not OpenAI anymore
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Question> generateQuestion(String topic) {
-        String content = cohereClient.generateRawQuizJson(topic);
+    public List<Question> generateQuestion(String topic, int count, String difficulty, int experience) {
+        String content = cohereClient.generateRawQuizJson(topic, count, difficulty, experience);
         List<Question> questions = new ArrayList<>();
 
         try {
