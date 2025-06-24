@@ -16,7 +16,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.*;
 
 import java.util.List;
-
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig {
@@ -31,8 +30,10 @@ public class SecurityConfig {
                 .and()
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // public auth routes
-                        .anyRequest().authenticated()
+                        .requestMatchers("/api/auth/**").permitAll()             // Public routes
+                        .requestMatchers("/api/results/me").authenticated()      // 👤 Protected route
+                        .requestMatchers("/api/quiz/**").authenticated()         // Quiz route (optional clarity)
+                        .anyRequest().authenticated()                            // Everything else
                 )
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -46,8 +47,6 @@ public class SecurityConfig {
     public AuthenticationManager authManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
-
-
 
     // ✅ CORS configuration
     @Bean
