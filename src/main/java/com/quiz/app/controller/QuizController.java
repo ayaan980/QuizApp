@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/quiz")
-@CrossOrigin(origins = "http://localhost:3000") // allow React dev server
+@CrossOrigin(origins = "http://localhost:3000")
 public class QuizController {
 
 
@@ -20,7 +20,12 @@ public class QuizController {
     }
 
     @GetMapping("/generate")
-    public List<Question> generate(@RequestParam String topic) {
-        return quizService.generateQuestion(topic);
+    public List<Question> generate(
+            @RequestParam String topic,
+            @RequestParam(defaultValue = "5") int count,
+            @RequestParam(defaultValue = "easy") String difficulty,
+            @RequestParam(defaultValue = "0") int experience
+    ) {
+        return quizService.generateQuestion(topic, count, difficulty, experience);
     }
 }

@@ -1,11 +1,16 @@
 package com.quiz.app.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.quiz.app.entity.Question;
 import com.quiz.app.repo.QuestionRepository;
+import com.quiz.app.webclient.CohereClient;
 import com.quiz.app.webclient.OpenAIClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -13,17 +18,30 @@ import java.util.List;
 public class QuizService {
 
     private final QuestionRepository repository;
-    private final OpenAIClient openAIClient;
+    private final CohereClient cohereClient; // Not OpenAI anymore
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public List<Question> generateQuestion(String topic) {
-        String rawResponse = openAIClient.generateRawQuizJson(topic);
+    public List<Question> generateQuestion(String topic, int count, String difficulty, int experience) {
+        String content = cohereClient.generateRawQuizJson(topic, count, difficulty, experience);
+        List<Question> questions = new ArrayList<>();
 
-        List<Question> dummy = List.of(
-                new Question(null, "What is Java?",
-                        List.of("A coffee", "A programming language", "A framework"),
-                        "A programming language")
-        );
+        try {
+            JsonNode parsed = objectMapper.readTree(content);
+            if (parsed.isArray()) {
+                for (JsonNode node : parsed) {
+                    Question q = new Question(
+                            null,
+                            node.get("question").asText(),
+                            objectMapper.convertValue(node.get("options"), List.class),
+                            node.get("answer").asText()
+                    );
+                    questions.add(q);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-        return repository.saveAll(dummy);
+        return repository.saveAll(questions);
     }
 }
