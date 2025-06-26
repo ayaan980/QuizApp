@@ -40,7 +40,7 @@ public class CohereClient {
         Map<String, Object> request = Map.of(
                 "model", "command-r-plus",
                 "prompt", prompt,
-                "max_tokens", 1000,
+                "max_tokens", 2048,  // increased to avoid cutoff
                 "temperature", 0.7
         );
 
@@ -51,32 +51,38 @@ public class CohereClient {
                 .block();
 
         try {
+            System.out.println("\n=== Cohere RAW Response ===\n" + response);
+
             JsonNode root = objectMapper.readTree(response);
             String rawText = root.get("generations").get(0).get("text").asText();
 
-            // Clean markdown, trim
+            System.out.println("\n=== Extracted Text ===\n" + rawText);
+
+            // Remove markdown if present
             rawText = rawText.replaceAll("(?i)```json", "")
                     .replaceAll("(?i)```", "")
                     .trim();
 
-            // Extract only the JSON array from response
+            // Validate bracket balance
+            long openBrackets = rawText.chars().filter(ch -> ch == '[').count();
+            long closeBrackets = rawText.chars().filter(ch -> ch == ']').count();
+            if (openBrackets != closeBrackets) {
+                throw new RuntimeException("❌ Unbalanced brackets in Cohere response. Probably truncated.\n" + rawText);
+            }
+
             int startIndex = rawText.indexOf("[");
             int endIndex = rawText.lastIndexOf("]");
-
             if (startIndex == -1 || endIndex == -1 || endIndex < startIndex) {
                 throw new RuntimeException("❌ JSON array not found in Cohere response:\n" + rawText);
             }
 
             String jsonArray = rawText.substring(startIndex, endIndex + 1);
+            System.out.println("\n=== Final JSON Array ===\n" + jsonArray);
 
-            // Validate JSON
-            try {
-                JsonNode test = objectMapper.readTree(jsonArray);
-                if (!test.isArray()) {
-                    throw new RuntimeException("Parsed content is not a JSON array.");
-                }
-            } catch (Exception ex) {
-                throw new RuntimeException("❌ JSON validation failed: Probably incomplete or corrupt.\n\nResponse:\n" + jsonArray, ex);
+            // Validate JSON structure
+            JsonNode test = objectMapper.readTree(jsonArray);
+            if (!test.isArray()) {
+                throw new RuntimeException("Parsed content is not a JSON array.");
             }
 
             return jsonArray;
