@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: postgresql://quizdb_191p_user:vSngqcEr9IS9J3w7ePMqkYKkpGFP9IYj@dpg-d1tt08c9c44c73cdku8g-a/quizdb_191p
+    url: jdbc:postgresql://dpg-d1tt08c9c44c73cdku8g-a.oregon-postgres.render.com/quizdb_191p
     username: quizdb_191p_user
     password: vSngqcEr9IS9J3w7ePMqkYKkpGFP9IYj
     driver-class-name: org.postgresql.Driver
