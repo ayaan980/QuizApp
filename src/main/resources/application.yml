@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local  # Change to 'prod' when deploying to Render or use ENV var
+    active: prod  # Change to 'prod' when deploying to Render or use ENV var
 
 openai:
   model: gpt-3.5-turbo
