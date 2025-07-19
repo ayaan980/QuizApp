@@ -52,10 +52,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("https://coruscating-peony-e44b25.netlify.app")); // ✅ Your frontend origin
+        config.setAllowedOrigins(List.of("https://coruscating-peony-e44b25.netlify.app"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
+        config.setExposedHeaders(List.of("Authorization")); // if your frontend needs it
         config.setAllowCredentials(true);
+        config.setMaxAge(3600L); // Cache preflight response for 1 hour
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
