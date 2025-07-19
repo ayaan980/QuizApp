@@ -9,7 +9,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/quiz")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://coruscating-peony-e44b25.netlify.app")
 public class QuizController {
 
 

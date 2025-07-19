@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "https://coruscating-peony-e44b25.netlify.app")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
