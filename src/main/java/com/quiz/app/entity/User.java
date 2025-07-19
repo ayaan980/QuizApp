@@ -29,8 +29,6 @@ public class User {
 
     private String email;
 
-    // You can add email, roles etc. later
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<TestResults> testResults = new ArrayList<>();
 

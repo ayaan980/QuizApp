@@ -1,26 +1,17 @@
-server:
-  port: 8081
 spring:
-  datasource:
-    url: jdbc:postgresql://localhost:5432/quizdb
-    username: mohdayaan
-    driver-class-name: org.postgresql.Driver
+  profiles:
+    active: local  # Change to 'prod' when deploying to Render or use ENV var
 
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
 openai:
   model: gpt-3.5-turbo
   api:
     url: https://api.openai.com/v1/chat/completions
     key: private-key
+
 cohere:
   api:
     url: https://api.cohere.ai/v1/generate
     key: KETruJJQArW5K4cYrV62QS3KsRqvWwa2RvwVSFRm
+
 jwt:
   secret: KJd83^maL#P2!c9vNQwZx7EfsT@RMbVp
